@@ -1,7 +1,7 @@
-cryptonote-nodejs-pool for merged mining
+goldendoge-nodejs-pool for merged mining
 =========================================
 
-High performance Node.js (with native C addons) mining pool for CryptoNote based coins. Comes with lightweight example front-end script which uses the pool's AJAX API. Support for Cryptonight (Original, Monero v7, Stellite v7), Cryptonight Light (Original, Aeon v7, IPBC), Cryptonight Pico (Trtl) and Cryptonight Heavy (Sumokoin) algorithms. With Merged mining support.
+High performance Node.js (with native C addons) mining pool for CryptoNote based coins. Comes with lightweight example front-end script which uses the pool's AJAX API. Support for Cryptonight (Original, Monero v7, Stellite v7), Cryptonight Light (Original, Aeon v7, IPBC), Cryptonight Pico (Trtl) and Cryptonight Heavy algorithms. With Merged mining support.
 
 
 #### Table of Contents
@@ -101,7 +101,7 @@ Community / Support
 #### Pools Using This Software
 
 * https://minercountry.com/
-
+* http://m2pool.eu/
 
 Usage
 ===
@@ -150,7 +150,7 @@ sudo su - your-user
 Clone the repository and run `npm update` for all the dependencies to be installed:
 
 ```bash
-git clone https://github.com/mcnproject/mm-cryptonote-nodejs-pool.git pool
+git clone https://github.com/GoldenDoge/goldendoge-merged-nodejs-pool pool
 cd pool
 
 npm update
@@ -158,21 +158,20 @@ npm update
 
 #### 2) Configuration
 
-Copy the `config_examples/COIN.json` file of your choice to `config.json` then overview each options and change any to match your preferred setup.
 
-Explanation for each field:
+Explanation for each field in config_XMV.json:
 ```javascript
 /* Pool host displayed in notifications and front-end */
 "poolHost": "your.pool.host",
 
 /* Used for storage in redis so multiple coins can share the same redis instance. */
-"coin": "graft",
+"coin": "MoneroV",
 
 /* Used for front-end display */
-"symbol": "GRFT",
+"symbol": "XMV",
 
 /* Minimum units in a single coin, see COIN constant in DAEMON_CODE/src/cryptonote_config.h */
-"coinUnits": 10000000000,
+"coinUnits": 100000000000,
 
 /* Number of coin decimals places for notifications and front-end */
 "coinDecimalPlaces": 4,
@@ -181,7 +180,7 @@ Explanation for each field:
 "coinDifficultyTarget": 120,
 
 /* Used for storage in redis so multiple coins can share the same redis instance. */
-"childCoin": "monetaverde",
+"childCoin": "GoldenDoge",
 
 /* Set daemon type. Supported values: default, forknote (Fix block height + 1), bytecoin (ByteCoin Wallet RPC API) */
 "daemonType": "default",
@@ -232,13 +231,13 @@ Explanation for each field:
     "clusterForks": "auto",
 
     /* Address where block rewards go, and miner payments come from. */
-    "poolAddress": "GBqRuitSoU3PFPBAkXMEnLdBRWXH4iDSD6RDxnQiEFjVJhWUi1UuqfV5EzosmaXgpPGE6JJQjMYhZZgWY8EJQn8jQTsuTit",
+    "poolAddress": "****  YOUR XMV WALLET ADDRESS *******",
 
     /* Address where child coin block rewards go, and miner payments come from. */
-    "poolChildAddress": "**** YOUR MCN WALLET ADDRESS ********",
+    "poolChildAddress": "**** YOUR GDOGE WALLET ADDRESS ********",
 
     /* This is the integrated address prefix used for miner login validation. */
-    "intAddressPrefix": 91,
+    "intAddressPrefix": "19",
 
     /* Poll RPC daemons for new blocks every this many milliseconds. */
     "blockRefreshInterval": 1000,
@@ -253,7 +252,7 @@ Explanation for each field:
     "ports": [
         {
             "port": 3333, // Port for mining apps to connect to
-            "difficulty": 2000, // Initial difficulty miners are set to
+            "difficulty": 5000, // Initial difficulty miners are set to
             "desc": "Low end hardware" // Description of port
         },
         {
@@ -289,10 +288,10 @@ Explanation for each field:
        individual miners based on their hashrate in order to lower networking and CPU
        overhead. */
     "varDiff": {
-        "minDiff": 100, // Minimum difficulty
+        "minDiff": 500, // Minimum difficulty
         "maxDiff": 100000000,
-        "targetTime": 60, // Try to get 1 share per this many seconds
-        "retargetTime": 30, // Check to see if we should retarget every this many seconds
+        "targetTime": 15, // Try to get 1 share per this many seconds
+        "retargetTime": 10, // Check to see if we should retarget every this many seconds
         "variancePercent": 30, // Allow time to vary this % from target without retargeting
         "maxJump": 100 // Limit diff percent increase/decrease in a single retargeting
     },
@@ -300,12 +299,12 @@ Explanation for each field:
     /* Set difficulty on miner client side by passing <address> param with +<difficulty> postfix */
     "fixedDiff": {
         "enabled": true,
-        "separator": "+", // Character separator between <address> and <difficulty>
+        "separator": ".", // Character separator between <address> and <difficulty>
     },
 
     /* Set payment ID on miner client side by passing <address>.<paymentID> */
     "paymentId": {
-        "addressSeparator": "." // Character separator between <address> and <paymentID>
+        "addressSeparator": "+" // Character separator between <address> and <paymentID>
     },
 
     /* Feature to trust share difficulties from miners which can
@@ -337,17 +336,17 @@ Explanation for each field:
 /* Module that sends payments to miners according to their submitted shares. */
 "payments": {
     "enabled": true,
-    "interval": 300, // How often to run in seconds
-    "maxAddresses": 50, // Split up payments if sending to more than this many addresses
+    "interval": 30, // How often to run in seconds
+    "maxAddresses": 500, // Split up payments if sending to more than this many addresses
     "mixin": 5, // Number of transactions yours is indistinguishable from
     "priority": 0, // The transaction priority    
-    "transferFee": 4000000000, // Fee to pay for each transaction
+    "transferFee": 1000000000, // Fee to pay for each transaction
     "dynamicTransferFee": true, // Enable dynamic transfer fee (fee is multiplied by number of miners)
     "minerPayFee" : true, // Miner pays the transfer fee instead of pool owner when using dynamic transfer fee
-    "minPayment": 100000000000, // Miner balance required before sending payment
+    "minPayment": 1000000000000, // Miner balance required before sending payment
     "maxPayment": null, // Maximum miner balance allowed in miner settings
-    "maxTransactionAmount": 0, // Split transactions by this amount (to prevent "too big transaction" error)
-    "denomination": 10000000000 // Truncate to this precision and store remainder
+    "maxTransactionAmount": 1000000000000000, // Split transactions by this amount (to prevent "too big transaction" error)
+    "denomination": 1000000000 // Truncate to this precision and store remainder
 },
 
 /* Module that monitors the submitted block maturities and manages rounds. Confirmed
@@ -390,19 +389,19 @@ Explanation for each field:
 /* Coin daemon connection details (default port is 18981) */
 "daemon": {
     "host": "127.0.0.1",
-    "port": 18981
+    "port": 19091
 },
 
 /* Child coin daemon connection details (default port is  MCN's 26081) */
 "childDaemon": {
     "host": "127.0.0.1",
-    "port": 26081
+    "port": 4041
 },
 
 /* Wallet daemon connection details (default port is 18980) */
 "wallet": {
     "host": "127.0.0.1",
-    "port": 18982
+    "port": 19095
 },
 
 /* Redis connection info (default port is 6379) */
@@ -580,7 +579,7 @@ Explanation for each field:
 #### 3) Start the pool
 
 ```bash
-node init.js
+node init.js -config=config_XMV.json
 ```
 
 The file `config.json` is used by default but a file can be specified using the `-config=file` command argument, for example:
@@ -619,12 +618,12 @@ sudo systemctl start cryptonote-nodejs-pool.service
 
 To enable merged mining you will need to use at leas 2 nodejs processes. One for the pool process + main coin config and another process for the child coin payments, unlocker, etc.
 First, you will need both coins node daemons running.
-Take a look at the [config_inf8-mcn.json](https://github.com/campurro/cryptonote-nodejs-pool/blob/master/config_inf8-mcn.json) for a main (pool) config example.
+Take a look at the [config_XMV.json]https://github.com/GoldenDoge/goldendoge-merged-nodejs-pool/blob/master/config_XMV.json) for a main (pool) config example.
 The child coin config file is a normal config with your child coin data but with the poolServer.enabled set to false. 
 
 ```
-nodejs init.js -config=config_inf8-mcn.json
-nodejs init.js -config=config_child_coin.json
+node init.js -config=config_XMV.json
+node initGDOGE.js -config=config_GDOGE.json
 ```
 You can use [forever](https://github.com/nodejitsu/forever) or [PM2](https://github.com/Unitech/pm2) to start both as daemons.
 
